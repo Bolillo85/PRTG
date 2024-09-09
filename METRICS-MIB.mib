@@ -1,0 +1,1099 @@
+-- File Name : METRICS-MIB.mib
+-- Date      : Wed Jul 11 21:16:00 CST 2018
+
+METRICS-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+        DisplayString, PhysAddress, snmp, system
+            FROM RFC1213-MIB
+        TEXTUAL-CONVENTION, DisplayString
+            FROM SNMPv2-TC
+        OBJECT-TYPE
+            FROM RFC-1212
+        enterprises
+            FROM RFC1155-SMI;
+
+-- TEXTUAL-CONVENTIONS --
+    PhysAddress ::=         OCTET STRING
+
+    DisplayString ::=       OCTET STRING
+
+    org OBJECT IDENTIFIER
+        ::=  {  iso  3  }
+
+    dod OBJECT IDENTIFIER
+        ::=  {  org  6  }
+
+    internet    OBJECT IDENTIFIER
+        ::=  {  dod  1  }
+
+    private OBJECT IDENTIFIER
+        ::=  {  internet  4  }
+
+    enterprises OBJECT IDENTIFIER
+        ::=  {  private  1  }
+
+    sangfor OBJECT IDENTIFIER
+        ::=  {  enterprises  35047  }
+
+    cloud   OBJECT IDENTIFIER
+        ::=  {  sangfor  3  }
+
+    cGeneral    OBJECT IDENTIFIER
+        ::=  {  cloud  1  }
+
+    cProduct    OBJECT IDENTIFIER
+        ::=  {  cloud  2  }
+
+    aCloud  OBJECT IDENTIFIER
+        ::=  {  cProduct  1  }
+
+    aCloudVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION "aCloud version"
+        ::=  {  aCloud  1  }
+    
+    aCloudHostInfo  OBJECT IDENTIFIER
+        ::=  {  aCloud  2  }
+
+    
+    aCloudHostCpu  OBJECT IDENTIFIER
+        ::=  {  aCloudHostInfo  1  }
+        
+    aCloudHostCpuUseRate    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "CPU use rate of a host"
+        ::=  {  aCloudHostCpu  1  }
+
+    aCloudHostMemory  OBJECT IDENTIFIER
+        ::=  {  aCloudHostInfo  2  }
+
+    aCloudHostMemoryUseRate OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Memory use rate of a host"
+        ::=  {  aCloudHostMemory  1  }
+        
+        
+    aCloudHostDisk  OBJECT IDENTIFIER
+        ::=  {  aCloudHostInfo  3  }
+
+    aCloudHostDiskUseRate   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Disk use rate"
+        ::=  {  aCloudHostDisk  1  }
+    
+        
+    aCloudHostStatus    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Status of a host"
+        ::=  {  aCloudHostInfo  4 }
+
+--        
+    aCloudHostFilesystemTable   OBJECT-TYPE 
+        SYNTAX          SEQUENCE  OF  ACloudHostFilesystemEntry
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "FilesystemUseRate of a host"
+        ::=  {  aCloudHostInfo  5 }
+		
+	aCloudHostFilesystemEntry OBJECT-TYPE
+        SYNTAX      ACloudHostFilesystemEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One network Interface infomation"
+        INDEX       {  hostFilesystemIndex  }
+        ::=  { aCloudHostFilesystemTable 1 }
+		
+	ACloudHostFilesystemEntry  ::=  SEQUENCE {
+        hostFilesystemIndex  INTEGER,
+        aCloudHostFilesystemName  OCTET STRING,
+        aCloudHostFilesystemSize  OCTET STRING,
+		aCloudHostFilesystemUsed  OCTET STRING,
+		aCloudHostFilesystemAvail  OCTET STRING,
+        aCloudHostFilesystemUseRate  OCTET STRING,
+		aCloudHostFilesystemMount  OCTET STRING
+        }
+		
+	hostFilesystemIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The filesystem index"
+        ::=  {  aCloudHostFilesystemEntry  1  }
+        
+    aCloudHostFilesystemName  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The name of FilesystemName"
+        ::=  {  aCloudHostFilesystemEntry  2  }
+		
+	aCloudHostFilesystemSize  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The name of FilesystemName"
+        ::=  {  aCloudHostFilesystemEntry  3  }
+        
+    aCloudHostFilesystemUsed  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The name of FilesystemName"
+        ::=  {  aCloudHostFilesystemEntry  4  }
+	
+	aCloudHostFilesystemAvail  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The name of FilesystemName"
+        ::=  {  aCloudHostFilesystemEntry  5  }
+	
+	aCloudHostFilesystemUseRate    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The userate of filesystem"
+        ::=  {  aCloudHostFilesystemEntry  6  }
+		
+	aCloudHostFilesystemMount    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Where is the filesystem mounted"
+        ::=  {  aCloudHostFilesystemEntry  7  }
+        	
+--		
+        
+    aCloudHostNetworkInterfaceTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  ACloudHostNetworkInterfaceEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "NetworkInterface infomation table"
+        ::=  { aCloudHostInfo  6 }
+        
+    aCloudHostNetworkInterfaceEntry OBJECT-TYPE
+        SYNTAX      ACloudHostNetworkInterfaceEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One network Interface infomation"
+        INDEX       {  hostnetworkInterfaceIndex  }
+        ::=  { aCloudHostNetworkInterfaceTable 1 }
+
+    ACloudHostNetworkInterfaceEntry  ::=  SEQUENCE {
+        hostnetworkInterfaceIndex  INTEGER,
+        aCloudHostNetworkInterfaceName  OCTET STRING,
+        aCloudHostNetworkInterfaceStatus  OCTET STRING,
+        aCloudHostNetworkInterfaceIsAvail  OCTET STRING,
+        aCloudHostNetworkInterfaceIpMask  OCTET STRING,
+        aCloudHostNetworkInterfaceGateway  OCTET STRING
+        }
+    
+    hostnetworkInterfaceIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The network Interface index"
+        ::=  {  aCloudHostNetworkInterfaceEntry  1  }
+        
+    aCloudHostNetworkInterfaceName  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The name of network Interface"
+        ::=  {  aCloudHostNetworkInterfaceEntry  2  }
+        
+    aCloudHostNetworkInterfaceStatus    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The status of network Interface"
+        ::=  {  aCloudHostNetworkInterfaceEntry  3  }
+        
+    aCloudHostNetworkInterfaceIsAvail   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Whether the network interface is available"
+        ::=  {  aCloudHostNetworkInterfaceEntry  4  }
+
+    aCloudHostNetworkInterfaceIpMask    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Ip/Mask adress"
+        ::=  {  aCloudHostNetworkInterfaceEntry  5  }
+
+    aCloudHostNetworkInterfaceGateway   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The gateway address"
+        ::=  {  aCloudHostNetworkInterfaceEntry  6  }
+        
+    aCloudHostBmc  OBJECT IDENTIFIER
+        ::=  {  aCloudHostInfo  7  }
+
+    aCloudHostBmcIpmiIp   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "IPMI IP of a BMC"
+        ::=  {  aCloudHostBmc  1  }
+
+    aCloudHostBmcIpmiVersion   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "IPMI Version of a BMC"
+        ::=  {  aCloudHostBmc  2  }
+
+    aCloudHostBmcVersion   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Bmc Version of a BMC"
+        ::=  {  aCloudHostBmc  3  }
+        
+    aCloudHostBaseboard  OBJECT IDENTIFIER
+        ::=  {  aCloudHostInfo  8  }
+
+    aCloudHostBaseboardModelName   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Model name of a baseboard"
+        ::=  {  aCloudHostBaseboard  1  }
+
+    aCloudHostBaseboardVendor   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Vendor of a baseboard"
+        ::=  {  aCloudHostBaseboard  2  }
+
+    aCloudHostBaseboardVersion   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Version of a baseboard"
+        ::=  {  aCloudHostBaseboard  3  }
+
+    aCloudHostBaseboardSerialNumber   OBJECT-TYPE
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Serial number of a baseboard"
+        ::=  {  aCloudHostBaseboard  4  }
+
+    aCloudStorageTable  OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  ACloudStorageEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Storage infomation table"
+        ::=  { aCloud  3 }
+    
+    aCloudStorageEntry  OBJECT-TYPE
+        SYNTAX      ACloudStorageEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One storage infomation"
+        INDEX       {  storageIndex  }
+        ::=  { aCloudStorageTable 1 }
+
+    ACloudStorageEntry  ::=  SEQUENCE {
+        storageIndex  INTEGER,
+        aCloudStorageName  DisplayString,
+        aCloudStorageStatus  DisplayString,
+        aCloudStorageUseRate  DisplayString,
+        aCloudStorageMaxIOReadRate  DisplayString,
+        aCloudStorageMaxIOWriteRate  DisplayString
+        }
+    
+    storageIndex    OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION	"The storage index"
+        ::=  {  aCloudStorageEntry  1  }
+        
+        
+    aCloudStorageName   OBJECT-TYPE 
+        SYNTAX          DisplayString
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Name of storage"
+        ::=  {  aCloudStorageEntry  2  }
+
+
+    aCloudStorageStatus OBJECT-TYPE 
+        SYNTAX          DisplayString
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Status of storage"
+        ::=  {  aCloudStorageEntry  3  }
+        
+        
+    aCloudStorageUseRate    OBJECT-TYPE 
+        SYNTAX          DisplayString
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "Used percent of storage"
+        ::=  {  aCloudStorageEntry  4  }
+        
+    aCloudStorageMaxIOReadRate OBJECT-TYPE  
+        SYNTAX          DisplayString
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The maximum readable rate of IO"
+        ::=  {  aCloudStorageEntry  5  }
+        
+    aCloudStorageMaxIOWriteRate OBJECT-TYPE 
+        SYNTAX          DisplayString
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The maximum readable write of IO"
+        ::=  {  aCloudStorageEntry  6 }
+
+--		
+        
+    hostPowersTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostPowersEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "powers information table"
+        ::=  { aCloudHostInfo  9 }
+        
+    hostPowersEntry OBJECT-TYPE
+        SYNTAX      HostPowersEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One power information"
+        INDEX       {  hostPowerIndex  }
+        ::=  { hostPowersTable 1 }
+
+    HostPowersEntry  ::=  SEQUENCE {
+        hostPowerIndex  INTEGER,
+        hostPowerMaxPower  OCTET STRING,
+        hostPowerModelName  OCTET STRING,
+        hostPowerVendor  OCTET STRING,
+        hostPowerSn  OCTET STRING
+        }
+    
+    hostPowerIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The power index"
+        ::=  {  hostPowersEntry  1  }
+        
+    hostPowerMaxPower  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The power max power capacity"
+        ::=  {  hostPowersEntry  2  }
+        
+    hostPowerModelName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The power model name"
+        ::=  {  hostPowersEntry  3  }
+        
+    hostPowerVendor   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The power vendor"
+        ::=  {  hostPowersEntry  4  }
+
+    hostPowerSn   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The power serial number"
+        ::=  {  hostPowersEntry  5  }
+
+--		
+        
+    hostMemoryTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostMemoryEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Memory information table"
+        ::=  { aCloudHostInfo  10 }
+        
+    hostMemoryEntry OBJECT-TYPE
+        SYNTAX      HostMemoryEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One Memory information"
+        INDEX       {  hostMemoryIndex  }
+        ::=  { hostMemoryTable 1 }
+
+    HostMemoryEntry  ::=  SEQUENCE {
+        hostMemoryIndex  INTEGER,
+        hostMemorySize  OCTET STRING,
+        hostMemoryLocator  OCTET STRING,
+        hostMemoryVendor  OCTET STRING,
+        hostMemorySN  OCTET STRING,
+        hostMemoryFrequency  OCTET STRING
+        }
+    
+    hostMemoryIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The Memory index"
+        ::=  {  hostMemoryEntry  1  }
+        
+    hostMemorySize  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The memory size"
+        ::=  {  hostMemoryEntry  2  }
+        
+    hostMemoryLocator    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The memory locator"
+        ::=  {  hostMemoryEntry  3  }
+        
+    hostMemoryVendor   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The memory vendor"
+        ::=  {  hostMemoryEntry  4  }
+
+    hostMemorySN   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The memory serial number"
+        ::=  {  hostMemoryEntry  5  }
+    
+    hostMemoryFrequency   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The memory frequency"
+        ::=  {  hostMemoryEntry  6  }
+
+--		
+        
+    hostGPUTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostGPUEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "GPU information table"
+        ::=  { aCloudHostInfo  11 }
+        
+    hostGPUEntry OBJECT-TYPE
+        SYNTAX      HostGPUEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One gpu information"
+        INDEX       {  hostGPUIndex  }
+        ::=  { hostGPUTable 1 }
+
+    HostGPUEntry  ::=  SEQUENCE {
+        hostGPUIndex  INTEGER,
+        hostGPUCores  OCTET STRING,
+        hostGPUName  OCTET STRING,
+        hostGPUVendor  OCTET STRING,
+        hostGPUSN  OCTET STRING
+        }
+    
+    hostGPUIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The gpu index"
+        ::=  {  hostGPUEntry  1  }
+        
+    hostGPUCores  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The gpu cores"
+        ::=  {  hostGPUEntry  2  }
+        
+    hostGPUName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The gpu model name"
+        ::=  {  hostGPUEntry  3  }
+        
+    hostGPUVendor   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The gpu vendor"
+        ::=  {  hostGPUEntry  4  }
+
+    hostGPUSN   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The gpu serial number"
+        ::=  {  hostGPUEntry  5  }
+
+--		
+        
+    hostCPUTable   OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostCPUEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "CPU information table"
+        ::=  { aCloudHostCpu 2 }
+        
+    hostCPUEntry   OBJECT-TYPE
+        SYNTAX      HostCPUEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One cpu information"
+        INDEX       {  hostCPUIndex  }
+        ::=  { hostCPUTable 1 }
+
+    HostCPUEntry  ::=  SEQUENCE {
+        hostCPUIndex  INTEGER,
+        hostCPUVendor  OCTET STRING,
+        hostCPUModel  OCTET STRING,
+        hostCPUVoltage  OCTET STRING,
+        hostCPUFrequency  OCTET STRING,
+        hostCPUCores  OCTET STRING,
+        hostCPUTemperature  OCTET STRING,
+        hostCPUSocketID  OCTET STRING,
+        }
+    
+    hostCPUIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The cpu index"
+        ::=  {  hostCPUEntry  1  }
+        
+    hostCPUVendor  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu manufacturer"
+        ::=  {  hostCPUEntry  2  }
+        
+    hostCPUModel    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu model name"
+        ::=  {  hostCPUEntry  3  }
+        
+    hostCPUVoltage   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu voltage"
+        ::=  {  hostCPUEntry  4  }
+
+    hostCPUFrequency   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu frequency"
+        ::=  {  hostCPUEntry  5  }
+
+    hostCPUCores   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu cores"
+        ::=  {  hostCPUEntry  6  }
+
+    hostCPUTemperature   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu temperature"
+        ::=  {  hostCPUEntry  7  }
+
+    hostCPUSocketID   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The cpu socket id"
+        ::=  {  hostCPUEntry  8  }
+
+--		
+        
+    hostOpticalTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostOpticalEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Optical module information table"
+        ::=  { aCloudHostInfo  12 }
+        
+    hostOpticalEntry OBJECT-TYPE
+        SYNTAX      HostOpticalEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Optical module information"
+        INDEX       {  hostOpticalIndex  }
+        ::=  { hostOpticalTable 1 }
+
+    HostOpticalEntry  ::=  SEQUENCE {
+        hostOpticalIndex  INTEGER,
+        hostOpticalVendor  OCTET STRING,
+        hostOpticalModelName  OCTET STRING,
+        hostOpticalOutputPower  OCTET STRING,
+        hostOpticalRecvPower  OCTET STRING
+        }
+    
+    hostOpticalIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The optical module index"
+        ::=  {  hostOpticalEntry  1  }
+        
+    hostOpticalVendor  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Optical module vendor"
+        ::=  {  hostOpticalEntry  2  }
+        
+    hostOpticalModelName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Optical module model name"
+        ::=  {  hostOpticalEntry  3  }
+        
+    hostOpticalOutputPower   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Optical module output power"
+        ::=  {  hostOpticalEntry  4  }
+
+    hostOpticalRecvPower   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The Optical module receive power"
+        ::=  {  hostOpticalEntry  5  }
+
+--		
+        
+    hostHBATable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostHBAEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "HBA information table"
+        ::=  { aCloudHostInfo  13 }
+        
+    hostHBAEntry OBJECT-TYPE
+        SYNTAX      HostHBAEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One HBA information"
+        INDEX       {  hostHBAIndex  }
+        ::=  { hostHBATable 1 }
+
+    HostHBAEntry  ::=  SEQUENCE {
+        hostHBAIndex  INTEGER,
+        hostHBAVendor  OCTET STRING,
+        hostHBAModelName  OCTET STRING,
+        hostHBADriver  OCTET STRING
+        }
+    
+    hostHBAIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The HBA index"
+        ::=  {  hostHBAEntry  1  }
+        
+    hostHBAVendor  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HBA vendor"
+        ::=  {  hostHBAEntry  2  }
+        
+    hostHBAModelName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HBA model name"
+        ::=  {  hostHBAEntry  3  }
+        
+    hostHBADriver   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HBA driver"
+        ::=  {  hostHBAEntry  4  }
+
+--		
+        
+    hostRAIDTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostRAIDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "RAID information table"
+        ::=  { aCloudHostInfo  14 }
+        
+    hostRAIDEntry OBJECT-TYPE
+        SYNTAX      HostRAIDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One RAID information"
+        INDEX       {  hostRAIDIndex  }
+        ::=  { hostRAIDTable 1 }
+
+    HostRAIDEntry  ::=  SEQUENCE {
+        hostRAIDIndex  INTEGER,
+        hostRAIDVendor  OCTET STRING,
+        hostRAIDModelName  OCTET STRING,
+        hostRAIDDriver  OCTET STRING,
+        hostRAIDStatus  OCTET STRING
+        }
+    
+    hostRAIDIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The RAID index"
+        ::=  {  hostRAIDEntry  1  }
+        
+    hostRAIDVendor  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The RAID vendor"
+        ::=  {  hostRAIDEntry  2  }
+        
+    hostRAIDModelName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The RAID model name"
+        ::=  {  hostRAIDEntry  3  }
+        
+    hostRAIDDriver   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The RAID driver"
+        ::=  {  hostRAIDEntry  4  }
+
+    hostRAIDStatus   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The RAID status"
+        ::=  {  hostRAIDEntry  5  }
+
+--		
+        
+    hostNICTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostNICEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "NIC information table"
+        ::=  { aCloudHostInfo  15 }
+        
+    hostNICEntry OBJECT-TYPE
+        SYNTAX      HostNICEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One NIC information"
+        INDEX       {  hostNICIndex  }
+        ::=  { hostNICTable 1 }
+
+    HostNICEntry  ::=  SEQUENCE {
+        hostNICIndex  INTEGER,
+        hostNICVendor  OCTET STRING,
+        hostNICModelName  OCTET STRING,
+        hostNICSpeed  OCTET STRING,
+        hostNICVersion  OCTET STRING
+        }
+    
+    hostNICIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The NIC index"
+        ::=  {  hostNICEntry  1  }
+        
+    hostNICVendor  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The NIC vendor"
+        ::=  {  hostNICEntry  2  }
+        
+    hostNICModelName    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The NIC model name"
+        ::=  {  hostNICEntry  3  }
+        
+    hostNICSpeed   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The NIC speed"
+        ::=  {  hostNICEntry  4  }
+
+    hostNICVersion   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The NIC firmwareversion"
+        ::=  {  hostNICEntry  5  }
+
+--		
+        
+    hostFanTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostFanEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "Fan information table"
+        ::=  { aCloudHostInfo 16 }
+        
+    hostFanEntry OBJECT-TYPE
+        SYNTAX      HostFanEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One fan information"
+        INDEX       {  hostFanIndex  }
+        ::=  { hostFanTable 1 }
+
+    HostFanEntry  ::=  SEQUENCE {
+        hostFanIndex  INTEGER,
+        hostFanName  OCTET STRING,
+        hostFanSpeed  OCTET STRING,
+        hostFanStatus  OCTET STRING,
+        }
+    
+    hostFanIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The fan index"
+        ::=  {  hostFanEntry  1  }
+        
+    hostFanName  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The fan name"
+        ::=  {  hostFanEntry  2  }
+        
+    hostFanSpeed    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The fan speed"
+        ::=  {  hostFanEntry  3  }
+        
+    hostFanStatus   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The fan status"
+        ::=  {  hostFanEntry  4  }
+
+--		
+        
+    hostHDDTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostHDDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "HDD information table"
+        ::=  { aCloudHostInfo 17 }
+        
+    hostHDDEntry OBJECT-TYPE
+        SYNTAX      HostHDDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One HDD information"
+        INDEX       {  hostHDDIndex  }
+        ::=  { hostHDDTable 1 }
+
+    HostHDDEntry  ::=  SEQUENCE {
+        hostHDDIndex  INTEGER,
+        hostHDDName  OCTET STRING,
+        hostHDDVendor  OCTET STRING,
+        hostHDDSN  OCTET STRING,
+        hostHDDType  OCTET STRING,
+        hostHDDCapacity  OCTET STRING,
+        hostHDDVersion  OCTET STRING,        
+        hostHDDStatus  OCTET STRING,
+        }
+    
+    hostHDDIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The HDD index"
+        ::=  {  hostHDDEntry  1  }
+        
+    hostHDDName  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD name"
+        ::=  {  hostHDDEntry  2  }
+        
+    hostHDDVendor    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD vendor"
+        ::=  {  hostHDDEntry  3  }
+
+    hostHDDSN    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD serial number"
+        ::=  {  hostHDDEntry  4  }
+
+    hostHDDType    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD disk type"
+        ::=  {  hostHDDEntry  5  }
+
+    hostHDDCapacity    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD capacity"
+        ::=  {  hostHDDEntry  6  }
+
+    hostHDDVersion    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD version"
+        ::=  {  hostHDDEntry  7  }
+
+    hostHDDStatus   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The HDD status"
+        ::=  {  hostHDDEntry  8  }
+
+--		
+        
+    hostSSDTable OBJECT-TYPE
+        SYNTAX      SEQUENCE  OF  HostSSDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "SSD information table"
+        ::=  { aCloudHostInfo 18 }
+        
+    hostSSDEntry OBJECT-TYPE
+        SYNTAX      HostSSDEntry
+        ACCESS      not-accessible
+        STATUS      mandatory
+        DESCRIPTION "One SSD information"
+        INDEX       {  hostSSDIndex  }
+        ::=  { hostSSDTable 1 }
+
+    HostSSDEntry  ::=  SEQUENCE {
+        hostSSDIndex  INTEGER,
+        hostSSDName  OCTET STRING,
+        hostSSDVendor  OCTET STRING,
+        hostSSDSN  OCTET STRING,
+        hostSSDType  OCTET STRING,
+        hostSSDCapacity  OCTET STRING,
+        hostSSDVersion  OCTET STRING,        
+        hostSSDStatus  OCTET STRING,
+        hostSSDLife  OCTET STRING,
+        }
+    
+    hostSSDIndex   OBJECT-TYPE 
+        SYNTAX          INTEGER
+        ACCESS          not-accessible
+        STATUS          mandatory
+        DESCRIPTION     "The SSD index"
+        ::=  {  hostSSDEntry  1  }
+        
+    hostSSDName  OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD name"
+        ::=  {  hostSSDEntry  2  }
+        
+    hostSSDVendor    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD vendor"
+        ::=  {  hostSSDEntry  3  }
+
+    hostSSDSN    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD serial number"
+        ::=  {  hostSSDEntry  4  }
+
+    hostSSDType    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD disk type"
+        ::=  {  hostSSDEntry  5  }
+
+    hostSSDCapacity    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD capacity"
+        ::=  {  hostSSDEntry  6  }
+
+    hostSSDVersion    OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD version"
+        ::=  {  hostSSDEntry  7  }
+
+    hostSSDStatus   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD status"
+        ::=  {  hostSSDEntry  8  }
+
+    hostSSDLife   OBJECT-TYPE 
+        SYNTAX          OCTET STRING
+        ACCESS          read-only
+        STATUS          mandatory
+        DESCRIPTION     "The SSD life"
+        ::=  {  hostSSDEntry  9  }
+
+END
